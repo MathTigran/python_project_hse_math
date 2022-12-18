@@ -9,9 +9,10 @@ import datetime as dt
 import requests
 
 
-token = '1460924071:AAGNSYgtrIzluRiuaPdsAUo8ORMoeOzWlFU'
-api = 'AIzaSyC_ifiGAqXUNusvGDcsm_w5smgyemvHRoY'
-weather_key = 'b932989d990d1c4241a71011e2ab3b73'
+token = ''
+api = ''
+weather_key = ''
+download_folder = ''
 
 bot = Bot(token=token)
 dp = Dispatcher(bot)
@@ -50,8 +51,8 @@ async def get_message_and_send_info(message):
 async def download_youtube_video(link, message, bot):
     yt = YouTube(link)
     stream = yt.streams.filter(progressive=True, file_extension='mp4')
-    stream.get_highest_resolution().download(f'/Users/tigranalvandyan/Desktop/downloaded_videos/', f'{message.chat.id}_{yt.title}')
-    with open(f'/Users/tigranalvandyan/Desktop/downloaded_videos/{message.chat.id}_{yt.title}', 'rb') as video:
+    stream.get_highest_resolution().download(f'{download_folder}', f'{message.chat.id}_{yt.title}')
+    with open(f'{download_folder}{message.chat.id}_{yt.title}', 'rb') as video:
         publication_date = get_video_info(link.split('=')[1])['items'][0]['snippet']['publishedAt']
         print(get_video_info(link.split('=')[1])['items'][0]['statistics'])
         menu = InlineKeyboardMarkup(row_width=2)
@@ -67,7 +68,7 @@ async def download_youtube_video(link, message, bot):
         try:
             await bot.send_video(message.chat.id, video, caption=f'Дата Выхода:*{publication_date}*', parse_mode='Markdown', reply_markup=menu)
         except Exception as e:
-            upload_file = open(f'/Users/tigranalvandyan/Desktop/downloaded_videos/{message.chat.id}_{yt.title}', 'rb')
+            upload_file = open(f'{download_folder}{message.chat.id}_{yt.title}', 'rb')
 
             await bot.send_message(message.chat.id, 'К сожалению Видео слишком тяжелое, телеграм такой вес не поддерживает :))')
             await bot.send_message(message.chat.id, f'Вот статистика: \n'
@@ -91,25 +92,3 @@ async def send_weather_to_location(message: types.Message):
 
 if __name__ == "__main__":
     executor.start_polling(dp, skip_updates=True)
-
-
-
-
-
-
-
-# sleep(100000)
-#
-#     await bot.send_document(document='/Users/tigranalvandyan/Desktop/downloaded_videos/2023 Mercedes AMG S 63 E PERFORMANCE - Sound Interior and Exterior in detail.mp4', chat_id=message.chat.id)
-#     # await bot.send_file(message.chat.id, file='/Users/tigranalvandyan/Desktop/downloaded_videos/2023 Mercedes AMG S 63 E PERFORMANCE - Sound Interior and Exterior in detail.mp4', method=None)
-#     if '=' in link:
-#         videos_id = link.split('=')[1]
-#         print(get_video_info(videos_id))
-#         title = get_video_info(videos_id)['items'][0]['snippet']['title']
-#     else:
-#         title = get_video_info(link)['items'][0]['snippet']['title']
-#     stream = yt.streams.get_by_itag(22)
-#     stream.download('/Users/tigranalvandyan/Desktop/downloaded_videos')
-#     title = title.replace(',', '').replace('.', '')
-#     print(title)
-#     await bot.send_video(message.chat.id, open(f'/Users/tigranalvandyan/Desktop/downloaded_videos/{title}.mp4', 'rb'))
